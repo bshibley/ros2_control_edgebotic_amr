@@ -1,0 +1,9 @@
+<library path="ros2_control_edgebotic_amr">
+  <class name="ros2_control_edgebotic_amr/AMRSystemHardware"
+         type="ros2_control_edgebotic_amr::AMRSystemHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Edgebotic AMR's ros2_control is a system hardware interface-type. It uses velocity command and position state interface. Its a hardware interface for a differential-drive mobile robot.
+    </description>
+  </class>
+</library>
