@@ -50,7 +50,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("ros2_control_edgebotic_amr"), "urdf", "amr.urdf.xacro"]
+                [FindPackageShare("edgebotic_amr"), "src/description", "amr.urdf.xacro"]
             ),
             " ",
             "use_mock_hardware:=",
