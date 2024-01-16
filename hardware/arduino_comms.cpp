@@ -4,8 +4,9 @@
 #include <sstream>
 #include <cstdlib>
 
-void ArduinoComms::setup(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms)
+void ArduinoComms::setup(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms, bool debug)
 {  
+    debug_ = debug;
     serial_conn_.setPort(serial_device);
     serial_conn_.setBaudrate(baud_rate);
     serial::Timeout tt = serial::Timeout::simpleTimeout(timeout_ms);
@@ -52,10 +53,10 @@ std::string ArduinoComms::sendMsg(const std::string &msg_to_send, bool print_out
     serial_conn_.write(msg_to_send);
     std::string response = serial_conn_.readline();
 
-    if (print_output)
+    if (print_output || debug_)
     {
-        // RCLCPP_INFO_STREAM(logger_,"Sent: " << msg_to_send);
-        // RCLCPP_INFO_STREAM(logger_,"Received: " << response);
+        RCLCPP_INFO_STREAM(rclcpp::get_logger("AMRSystemHardware"),"Sent: " << msg_to_send);
+        RCLCPP_INFO_STREAM(rclcpp::get_logger("AMRSystemHardware"),"Received: " << response);
     }
 
     return response;

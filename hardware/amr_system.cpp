@@ -94,13 +94,14 @@ hardware_interface::CallbackReturn AMRSystemHardware::on_init(
   baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
   timeout = std::stoi(info_.hardware_parameters["timeout"]);
   enc_counts_per_rev = std::stoi(info_.hardware_parameters["enc_counts_per_rev"]);
+  debug = std::stoi(info_.hardware_parameters["debug"]);
 
   // Set up the wheels
   l_wheel_.setup(left_wheel_name, enc_counts_per_rev);
   r_wheel_.setup(right_wheel_name, enc_counts_per_rev);
 
   // Set up the Arduino
-  arduino_.setup(device, baud_rate, timeout);
+  arduino_.setup(device, baud_rate, timeout, debug);
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -217,6 +218,12 @@ hardware_interface::return_type AMRSystemHardware::read(
   }
 
   arduino_.readEncoderValues(l_wheel_.enc, r_wheel_.enc);
+
+  if (debug)
+  {
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("AMRSystemHardware"), "Left wheel encoder: " << l_wheel_.enc);
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("AMRSystemHardware"), "Right wheel encoder: " << r_wheel_.enc);
+  }
 
   double pos_prev = l_wheel_.pos;
   hw_positions_[0] = l_wheel_.pos = l_wheel_.calcEncAngle();

@@ -11,11 +11,11 @@ public:
   ArduinoComms()
   {  }
 
-  ArduinoComms(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms)
-      : serial_conn_(serial_device, baud_rate, serial::Timeout::simpleTimeout(timeout_ms))
+  ArduinoComms(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms, bool debug)
+      : serial_conn_(serial_device, baud_rate, serial::Timeout::simpleTimeout(timeout_ms)), debug_(debug)
   {  }
 
-  void setup(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms);
+  void setup(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms, bool debug);
   void sendEmptyMsg();
   void readEncoderValues(int &val_1, int &val_2);
   void setMotorValues(int val_1, int val_2);
@@ -27,6 +27,7 @@ public:
 
 private:
   serial::Serial serial_conn_;  ///< Underlying serial connection 
+  bool debug_;
 };
 
 #endif // DIFFDRIVE_ARDUINO_ARDUINO_COMMS_H
