@@ -265,6 +265,12 @@ hardware_interface::return_type ros2_control_edgebotic_amr ::AMRSystemHardware::
     return hardware_interface::return_type::ERROR;
   }
 
+  if (debug)
+  {
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("AMRSystemHardware"), "Left wheel command: " << l_wheel_.cmd);
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("AMRSystemHardware"), "Right wheel command: " << r_wheel_.cmd);
+  }
+
   arduino_.setMotorValues(l_wheel_.cmd / l_wheel_.rads_per_count / loop_rate, r_wheel_.cmd / r_wheel_.rads_per_count / loop_rate);
 
   return hardware_interface::return_type::OK;
