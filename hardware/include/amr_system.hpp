@@ -73,20 +73,11 @@ private:
   Wheel l_wheel_;
   Wheel r_wheel_;
 
-  std::chrono::time_point<std::chrono::system_clock> time_;
-
-  // Store the command for the simulated robot
-  std::vector<double> hw_commands_;
-  std::vector<double> hw_positions_;
-  std::vector<double> hw_velocities_;
-
   // Config params
-  std::string left_wheel_name = "left_wheel";
-  std::string right_wheel_name = "right_wheel";
-  float loop_rate = 30;
+  float loop_rate = 10;
   std::string device = "/dev/ttyACM0";
   int baud_rate = 57600;
-  int timeout = 1000;
+  int timeout = 500;
   int enc_counts_per_rev = 1992;
   int debug = 0;
 };
