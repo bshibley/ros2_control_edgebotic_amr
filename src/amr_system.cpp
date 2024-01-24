@@ -81,19 +81,19 @@ hardware_interface::CallbackReturn AMRSystemHardware::on_init(
       return hardware_interface::CallbackReturn::ERROR;
     }
   }
-  loop_rate = std::stof(info_.hardware_parameters["loop_rate"]);
-  device = info_.hardware_parameters["device"];
-  baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
-  timeout = std::stoi(info_.hardware_parameters["timeout"]);
-  enc_counts_per_rev = std::stoi(info_.hardware_parameters["enc_counts_per_rev"]);
-  debug = std::stoi(info_.hardware_parameters["debug"]);
+  _loop_rate = std::stof(info_.hardware_parameters["loop_rate"]);
+  _device = info_.hardware_parameters["device"];
+  _baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
+  _timeout = std::stoi(info_.hardware_parameters["timeout"]);
+  _enc_counts_per_rev = std::stoi(info_.hardware_parameters["enc_counts_per_rev"]);
+  _debug = std::stoi(info_.hardware_parameters["debug"]);
 
   // Set up the wheels
-  l_wheel_.setup(info_.joints[0].name, enc_counts_per_rev);
-  r_wheel_.setup(info_.joints[1].name, enc_counts_per_rev);
+  _l_wheel.setup(info_.joints[0].name, _enc_counts_per_rev);
+  _r_wheel.setup(info_.joints[1].name, _enc_counts_per_rev);
 
   // Set up the Arduino
-  arduino_.setup(device, baud_rate, timeout, debug);
+  _arduino.setup(_device, _baud_rate, _timeout, _debug);
 
   RCLCPP_INFO(rclcpp::get_logger("AMRSystemHardware"), "Successfully initialized!");
 
@@ -105,13 +105,13 @@ std::vector<hardware_interface::StateInterface> AMRSystemHardware::export_state_
   std::vector<hardware_interface::StateInterface> state_interfaces;
   
   state_interfaces.emplace_back(hardware_interface::StateInterface(
-    info_.joints[0].name, hardware_interface::HW_IF_POSITION, &l_wheel_.pos));
+    info_.joints[0].name, hardware_interface::HW_IF_POSITION, &_l_wheel.pos));
   state_interfaces.emplace_back(hardware_interface::StateInterface(
-    info_.joints[0].name, hardware_interface::HW_IF_VELOCITY, &l_wheel_.vel));
+    info_.joints[0].name, hardware_interface::HW_IF_VELOCITY, &_l_wheel.vel));
   state_interfaces.emplace_back(hardware_interface::StateInterface(
-    info_.joints[1].name, hardware_interface::HW_IF_POSITION, &r_wheel_.pos));
+    info_.joints[1].name, hardware_interface::HW_IF_POSITION, &_r_wheel.pos));
   state_interfaces.emplace_back(hardware_interface::StateInterface(
-    info_.joints[1].name, hardware_interface::HW_IF_VELOCITY, &r_wheel_.vel));
+    info_.joints[1].name, hardware_interface::HW_IF_VELOCITY, &_r_wheel.vel));
   
 
   return state_interfaces;
@@ -122,9 +122,9 @@ std::vector<hardware_interface::CommandInterface> AMRSystemHardware::export_comm
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
-    info_.joints[0].name, hardware_interface::HW_IF_VELOCITY, &l_wheel_.cmd));
+    info_.joints[0].name, hardware_interface::HW_IF_VELOCITY, &_l_wheel.cmd));
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
-    info_.joints[1].name, hardware_interface::HW_IF_VELOCITY, &r_wheel_.cmd));
+    info_.joints[1].name, hardware_interface::HW_IF_VELOCITY, &_r_wheel.cmd));
 
   return command_interfaces;
 }
@@ -134,8 +134,8 @@ hardware_interface::CallbackReturn AMRSystemHardware::on_activate(
 {
   RCLCPP_INFO(rclcpp::get_logger("AMRSystemHardware"), "Activating Edgebotic AMR Controller....");
 
-  arduino_.sendEmptyMsg();
-  //arduino_.setPidValues(30, 20, 0, 100);
+  _arduino.sendEmptyMsg();
+  //_arduino.setPidValues(30, 20, 0, 100);
 
   RCLCPP_INFO(rclcpp::get_logger("AMRSystemHardware"), "Successfully activated!");
 
@@ -157,26 +157,26 @@ hardware_interface::return_type AMRSystemHardware::read(
 {
   double deltaSeconds = period.seconds();
 
-  if (!arduino_.connected())
+  if (!_arduino.connected())
   {
     RCLCPP_FATAL(rclcpp::get_logger("AMRSystemHardware"), "Motor controller not connected.");
     return hardware_interface::return_type::ERROR;
   }
 
-  arduino_.readEncoderValues(l_wheel_.enc, r_wheel_.enc);
+  _arduino.readEncoderValues(_l_wheel.enc, _r_wheel.enc);
 
-  if (debug)
+  if (_debug)
   {
-    RCLCPP_INFO_STREAM(rclcpp::get_logger("AMRSystemHardware"), "Wheel encoder counts --  Left: " << l_wheel_.enc << "  Right: " << r_wheel_.enc);
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("AMRSystemHardware"), "Wheel encoder counts --  Left: " << _l_wheel.enc << "  Right: " << _r_wheel.enc);
   }
 
-  double pos_prev = l_wheel_.pos;
-  l_wheel_.pos = l_wheel_.calcEncAngle();
-  l_wheel_.vel = (l_wheel_.pos - pos_prev) / deltaSeconds;
+  double pos_prev = _l_wheel.pos;
+  _l_wheel.pos = _l_wheel.calcEncAngle();
+  _l_wheel.vel = (_l_wheel.pos - pos_prev) / deltaSeconds;
 
-  pos_prev = r_wheel_.pos;
-  r_wheel_.pos = r_wheel_.calcEncAngle();
-  r_wheel_.vel = (r_wheel_.pos - pos_prev) / deltaSeconds;
+  pos_prev = _r_wheel.pos;
+  _r_wheel.pos = _r_wheel.calcEncAngle();
+  _r_wheel.vel = (_r_wheel.pos - pos_prev) / deltaSeconds;
 
   return hardware_interface::return_type::OK;
 }
@@ -184,17 +184,17 @@ hardware_interface::return_type AMRSystemHardware::read(
 hardware_interface::return_type ros2_control_edgebotic_amr ::AMRSystemHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  if (debug)
+  if (_debug)
   {
-    RCLCPP_INFO_STREAM(rclcpp::get_logger("AMRSystemHardware"), "Wheel command received --  Left: " << l_wheel_.cmd << "  Right: " << r_wheel_.cmd);
+    RCLCPP_INFO_STREAM(rclcpp::get_logger("AMRSystemHardware"), "Wheel command received --  Left: " << _l_wheel.cmd << "  Right: " << _r_wheel.cmd);
   }
-  if (!arduino_.connected())
+  if (!_arduino.connected())
   {
     RCLCPP_FATAL(rclcpp::get_logger("AMRSystemHardware"), "Motor controller not connected.");
     return hardware_interface::return_type::ERROR;
   }
 
-  arduino_.setMotorValues(l_wheel_.cmd / l_wheel_.rads_per_count / loop_rate, r_wheel_.cmd / r_wheel_.rads_per_count / loop_rate);
+  _arduino.setMotorValues(_l_wheel.cmd / _l_wheel.rads_per_count / _loop_rate, _r_wheel.cmd / _r_wheel.rads_per_count / _loop_rate);
 
   return hardware_interface::return_type::OK;
 }

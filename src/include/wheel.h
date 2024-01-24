@@ -1,5 +1,5 @@
-#ifndef DIFFDRIVE_ARDUINO_WHEEL_H
-#define DIFFDRIVE_ARDUINO_WHEEL_H
+#ifndef ROS2_CONTROL_EDGEBOTIC_AMR__WHEEL_H_
+#define ROS2_CONTROL_EDGEBOTIC_AMR__WHEEL_H_
 
 #include <string>
 
@@ -24,4 +24,4 @@ public:
     double calcEncAngle();
 };
 
-#endif // DIFFDRIVE_ARDUINO_WHEEL_H
+#endif // ROS2_CONTROL_EDGEBOTIC_AMR__WHEEL_H_

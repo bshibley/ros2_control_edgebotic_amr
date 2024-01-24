@@ -24,13 +24,13 @@ endforeach()
 add_library(
   ros2_control_edgebotic_amr
   SHARED
-  hardware/amr_system.cpp
-  hardware/arduino_comms.cpp
-  hardware/wheel.cpp
+  src/amr_system.cpp
+  src/arduino_comms.cpp
+  src/wheel.cpp
 )
 target_compile_features(ros2_control_edgebotic_amr PUBLIC cxx_std_17)
 target_include_directories(ros2_control_edgebotic_amr PUBLIC
-$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/hardware/include>
+$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/include>
 $<INSTALL_INTERFACE:include/ros2_control_edgebotic_amr>
 )
 ament_target_dependencies(
@@ -47,7 +47,7 @@ pluginlib_export_plugin_description_file(hardware_interface ros2_control_edgebot
 
 # INSTALL
 install(
-  DIRECTORY hardware/include/
+  DIRECTORY src/include/
   DESTINATION include/ros2_control_edgebotic_amr
 )
 install(

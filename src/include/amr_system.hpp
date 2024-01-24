@@ -68,18 +68,18 @@ public:
 
 private:
 
-  ArduinoComms arduino_;
+  ArduinoComms _arduino;
 
-  Wheel l_wheel_;
-  Wheel r_wheel_;
+  Wheel _l_wheel;
+  Wheel _r_wheel;
 
   // Config params
-  float loop_rate = 10;
-  std::string device = "/dev/ttyACM0";
-  int baud_rate = 57600;
-  int timeout = 500;
-  int enc_counts_per_rev = 1992;
-  int debug = 0;
+  float _loop_rate = 10;
+  std::string _device = "/dev/ttyACM0";
+  int _baud_rate = 57600;
+  int _timeout = 500;
+  int _enc_counts_per_rev = 1992;
+  int _debug = 0;
 };
 
 }  // namespace ros2_control_edgebotic_amr
